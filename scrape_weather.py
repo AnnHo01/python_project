@@ -86,6 +86,7 @@ def early_year(type):
 
 def get_weather():
   # input will be the 
+  result = {}
   today = date.today()
   input = today.year
   early = early_year("y")
@@ -106,9 +107,10 @@ def get_weather():
       for key, value in myparser.weather.items():
         if year_to_loop == int(early):
           if month >= int(month_num):
-            print(key, value)
-          #  print(month_num)
+            result.update({key: value})
         else:
-          print(key, value)
+            result.update({key: value})
+            
+  return result
 
-get_weather()
+print(get_weather()) 
