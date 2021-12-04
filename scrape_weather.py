@@ -49,6 +49,7 @@ class WeatherScraper(HTMLParser):
     if tag == "tr":
       self.tr_flag = False
       self.td_counter = 0
+      self.daily_temps = {}
     if tag == "abbr":
       self.abbr_flag = False
 
@@ -62,10 +63,9 @@ class WeatherScraper(HTMLParser):
         self.daily_temps.update({"Min Temp": self.temp})
       if self.td_counter == 3:
         self.daily_temps.update({"Mean Temp": self.temp})
-
-    self.weather.update({self.day: self.daily_temps})
-        
-          
+      if (self.day != "Average") and (self.day != "Extreme"):
+        self.weather.update({self.day: self.daily_temps})
+ 
 
 
     # def handle_starttag(self, tag, attrs):
