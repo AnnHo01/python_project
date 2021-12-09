@@ -3,14 +3,15 @@ import dbcm
 
 class DBOperations():
 
-    def __init__(self, weather, filename):
-        self.weather = weather
+    def __init__(self, filename):
+        self.weather = None
         self.filename = filename
 
 
-    def initialize_db(self):
+    def initialize_db(self, weather):
         """This function will initialize the database and create the table."""
         try:
+            self.weather = weather
             with dbcm.DBCM(self.filename) as db:
                 db.execute("""create table if not exists samples (id integer primary key autoincrement not null,
                                                     sample_date text not null UNIQUE,
@@ -48,9 +49,11 @@ class DBOperations():
     def fetch_data(self):
         try:
             """This function will print the data"""
+            list = []
             with dbcm.DBCM(self.filename) as db:
                 for row in db.execute("select * from samples"):
-                    print(row)
+                    list.append(row)
+                return tuple(list)
         except Exception as e:
             print("DBOperation:fetch_db:error: ", e)
 
@@ -64,9 +67,9 @@ class DBOperations():
             print("DBOperation:purge_data:error: ", e)
 
 
-"""Main Code"""
-weather = scrape_weather.get_weather()
-test = DBOperations(weather, "weather.sqlite")
-test.initialize_db()
+"""Inputing data to database"""
+# weather = scrape_weather.get_weather()
+# test = DBOperations("weather.sqlite")
+# test.initialize_db(weather)
 # test.save_data()
-test.fetch_data()
+# print(test.fetch_data())

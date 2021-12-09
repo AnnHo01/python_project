@@ -7,7 +7,7 @@ from datetime import date, datetime
 """This module scrapes the data from the website colorhexa.com and prints out the colors"""
 
 class WeatherScraper(HTMLParser):
-  
+
   def __init__(self):
     HTMLParser.__init__(self)
     self.tbody_flag = False
@@ -15,6 +15,7 @@ class WeatherScraper(HTMLParser):
     self.tr_flag = False
     self.abbr_flag = False
     self.td_counter = 0
+    self.tr_counter = 0
     self.daily_temps = {}
     self.weather ={}
     self.day = ""
@@ -26,6 +27,7 @@ class WeatherScraper(HTMLParser):
     if tag == "tbody":
       self.tbody_flag = True
     if tag == "tr":
+      self.tr_counter += 1
       self.tr_flag = True
     if tag == "td":
       self.td_counter += 1
@@ -33,7 +35,7 @@ class WeatherScraper(HTMLParser):
     if tag == "abbr":
       self.abbr_flag = True
       for name, value in attrs:
-        if name == "title":
+        if name == "title" and self.tr_counter > 1:
           self.day = value
           if(self.day.find(',') >= 0):
             self.year = self.day[self.day.find(',') + 1: ]
@@ -43,8 +45,9 @@ class WeatherScraper(HTMLParser):
   def handle_endtag(self, tag):
     if tag == "tbody":
       self.tbody_flag = False
+      self.tr_counter = 0
       # for name, value in self.weather.items():
-      #   print(name, value)   
+      #   print(name, value)
     if tag == "td":
           self.td_flag = False
     if tag == "tr":
@@ -64,12 +67,12 @@ class WeatherScraper(HTMLParser):
         self.daily_temps.update({"Min Temp": self.temp})
       if self.td_counter == 3:
         self.daily_temps.update({"Mean Temp": self.temp})
-      if (self.day != "Average") and (self.day != "Extreme"):
+      if (self.day != "Average") and (self.day != "Extreme") and (self.day != ''):
         self.weather.update({self.day: self.daily_temps})
- 
+
 
 def early_year(type):
-  
+
   today = date.today()
   input = today.year
   url = f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={input}&Day=1&Year=1840'
@@ -85,13 +88,13 @@ def early_year(type):
     return month
 
 def get_weather():
-  # input will be the 
+  # input will be the
   result = {}
   today = date.today()
   input = today.year
   early = early_year("y")
   eMonth = early_year("m")
-  
+
   for i in range((int(input) - int(early) + 1)):
     year_to_loop = input - i
     for j in range(12):
@@ -103,14 +106,16 @@ def get_weather():
       myparser.feed(html)
       datetime_object = datetime.strptime(eMonth.strip(), "%B")
       month_num = datetime_object.month
-   
+
       for key, value in myparser.weather.items():
+        date_format = datetime.strptime(str(key), '%B %d, %Y' )
+        right_format = date_format.strftime('%Y-%m-%d')
         if year_to_loop == int(early):
           if month >= int(month_num):
-            result.update({key: value})
+            result.update({right_format: value})
         else:
-            result.update({key: value})
-            
+            result.update({right_format: value})
+
   return result
 
-# print(get_weather()) 
+# print(get_weather())
