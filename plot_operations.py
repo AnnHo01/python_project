@@ -1,19 +1,18 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
 import statistics
-import db_operations
 import collections
 
 class PlotOperations():
     """Create a basic boxplot of mean temperatures in a date range supplied by the user."""
-    def __init__(self):
+    def __init__(self, data_tuple):
         self.weather_data = {}
         self.data_list = []
+        self.data_tuple = data_tuple
 
     def process_data(self, start_year = None, end_year = None, input_month = None, input_year = None):
         """Loop through database and grab data."""
-        db = db_operations.DBOperations("weather.sqlite")
-        data_tuple = db.fetch_data()
+        data_tuple = self.data_tuple
         new_month = 0
         choice = None
         for x in data_tuple:
@@ -83,18 +82,3 @@ class PlotOperations():
             plt.show()
         except Exception as e:
             print("PlotOperations:line_plotting:Error: ", e)
-
-
-test = PlotOperations()
-choice = input("Enter plotting choice (box or line):")
-if choice == "box":
-    start_year = input("Enter start year: ")
-    end_year = input("Enter end year: ")
-
-    test.process_data(start_year, end_year)
-elif choice == "line":
-    month = input("Enter a month number: ")
-    year = input("Enter a year number: ")
-
-    test.process_data(None, None, month, year)
-

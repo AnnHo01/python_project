@@ -72,6 +72,7 @@ class WeatherScraper(HTMLParser):
 
 
 def early_year(type):
+  """This function is finding out the earliest yearon the website"""
 
   today = date.today()
   input = today.year
@@ -87,29 +88,35 @@ def early_year(type):
   elif(type=="m"):
     return month
 
-def get_weather(latest_year = None):
-  # input will be the
+def get_weather(latest_year = None, latest_month = None):
+  """This function scrapes the data"""
   result = {}
   today = date.today()
   input = today.year
   new_month = 0
+  early = None
+  eMonth = None
   if latest_year != None:
     early = latest_year
+    eMonth = str(latest_month)
   else:
     early = early_year("y")
-  eMonth = early_year("m")
+    eMonth = early_year("m")
 
   for i in range((int(input) - int(early) + 1)):
-    year_to_loop = input - i
+    year_to_loop = int(early) + i
     for j in range(12):
-      month = 12 - j
+      month = j + 1
       myparser = WeatherScraper()
       with urllib.request.urlopen(f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={input}&Day=1&Year={year_to_loop}&Month={month}#') as response:
           html = str(response.read())
 
       myparser.feed(html)
-      datetime_object = datetime.strptime(eMonth.strip(), "%B")
-      month_num = datetime_object.month
+      if not eMonth.isnumeric():
+          datetime_object = datetime.strptime(eMonth.strip(), "%B")
+          month_num = datetime_object.month
+      else:
+          month_num = int(eMonth)
 
       for key, value in myparser.weather.items():
         date_format = datetime.strptime(str(key), '%B %d, %Y' )
@@ -117,13 +124,17 @@ def get_weather(latest_year = None):
         if year_to_loop == int(early):
           if month >= int(month_num):
             result.update({right_format: value})
+            if month != new_month:
+              print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+              new_month = month
         else:
             result.update({right_format: value})
-        if month != new_month:
-            print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
-            new_month = month
+            if month != new_month:
+              print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+              new_month = month
+
 
 
   return result
 
-print(get_weather())
+# print(get_weather())
