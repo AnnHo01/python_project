@@ -22,7 +22,7 @@ class PlotOperations():
             day = int(date[8:])
             avg_temp = str(x[5])
             if start_year != None:
-                if int(start_year) <= year and year <= int(end_year):
+                if (int(start_year) <= year and year <= int(end_year)) or (year > int(end_year) and month == 1):
                     if month != new_month:
                         if self.data_list != []:
                             if str(month) in self.weather_data:
@@ -67,6 +67,7 @@ class PlotOperations():
             plt.boxplot(list_plot)
             plt.ylabel("Mean Temp")
             plt.xlabel(f"{start_year} to {end_year}")
+            plt.title(f"Monthly temperature for years: {start_year} to {end_year}")
             plt.show()
         except Exception as e:
             print("PlotOperations:plotting:Error: ", e)
