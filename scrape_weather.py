@@ -87,12 +87,16 @@ def early_year(type):
   elif(type=="m"):
     return month
 
-def get_weather():
+def get_weather(latest_year = None):
   # input will be the
   result = {}
   today = date.today()
   input = today.year
-  early = early_year("y")
+  new_month = 0
+  if latest_year != None:
+    early = latest_year
+  else:
+    early = early_year("y")
   eMonth = early_year("m")
 
   for i in range((int(input) - int(early) + 1)):
@@ -115,7 +119,11 @@ def get_weather():
             result.update({right_format: value})
         else:
             result.update({right_format: value})
+        if month != new_month:
+            print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+            new_month = month
+
 
   return result
 
-# print(get_weather())
+print(get_weather())

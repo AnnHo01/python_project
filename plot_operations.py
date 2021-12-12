@@ -1,9 +1,7 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
-from dateutil import parser
 import statistics
 import db_operations
-import pprint
 import collections
 
 class PlotOperations():
@@ -79,7 +77,6 @@ class PlotOperations():
         try:
             datetime_object = datetime.strptime(month, "%m")
             month_name = datetime_object.strftime("%B")
-            print(month)
             plt.plot(data)
             plt.ylabel("Mean Temp")
             plt.xlabel(month_name + f", {year}")
