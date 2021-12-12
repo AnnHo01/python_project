@@ -1,3 +1,4 @@
+from datetime import datetime
 import matplotlib.pyplot as plt
 from dateutil import parser
 import statistics
@@ -11,34 +12,48 @@ class PlotOperations():
         self.weather_data = {}
         self.data_list = []
 
-    def process_data(self):
+    def process_data(self, start_year = None, end_year = None, input_month = None, input_year = None):
         """Loop through database and grab data."""
         db = db_operations.DBOperations("weather.sqlite")
         data_tuple = db.fetch_data()
         new_month = 0
+        choice = None
         for x in data_tuple:
             date = str(x[1])
+            year = int(date[:4])
             month = int(date[5:7])
             day = int(date[8:])
             avg_temp = str(x[5])
-            if month != new_month:
-                if self.data_list != []:
-                    if str(month) in self.weather_data:
-                        for item in self.data_list:
-                            self.weather_data[int(month)].append(float(item))
+            if start_year != None:
+                if int(start_year) <= year and year <= int(end_year):
+                    if month != new_month:
+                        if self.data_list != []:
+                            if str(month) in self.weather_data:
+                                for item in self.data_list:
+                                    self.weather_data[int(month)].append(float(item))
+                            else:
+                                self.weather_data.update({int(month): self.data_list})
+                        new_month = month
+                        self.data_list = []
+                        if not avg_temp.isalpha() and avg_temp != '\xa0':
+                            self.data_list.append(float(avg_temp))
                     else:
-                        self.weather_data.update({int(month): self.data_list})
-                new_month = month
-                self.data_list = []
-                if not avg_temp.isalpha() and avg_temp != '\xa0':
-                    self.data_list.append(float(avg_temp))
-            else:
-                if not avg_temp.isalpha() and avg_temp != '\xa0':
-                    self.data_list.append(float(avg_temp))
-        return self.weather_data
+                        if not avg_temp.isalpha() and avg_temp != '\xa0':
+                            self.data_list.append(float(avg_temp))
+                    choice = "box"
+            elif input_month != None:
+                if int(input_month) == month and int(input_year) == year:
+                    if not avg_temp.isalpha() and avg_temp != '\xa0':
+                        self.data_list.append(float(avg_temp))
 
-    def plotting(self, data):
-        """Plot the box graph using given data. Data accepted is a dictionary"""
+
+        if choice == "box":
+            self.box_plotting(self.weather_data, start_year, end_year)
+        else:
+            self.line_plotting(self.data_list, input_month, input_year)
+
+    def box_plotting(self, data, start_year, end_year):
+        """Plot the box graph using given data. Data accepted is a dictionary."""
         try:
             list_plot = []
             ordered_dict = collections.OrderedDict(sorted(data.items()))
@@ -53,11 +68,36 @@ class PlotOperations():
 
             plt.figure()
             plt.boxplot(list_plot)
+            plt.ylabel("Mean Temp")
+            plt.xlabel(f"{start_year} to {end_year}")
             plt.show()
         except Exception as e:
             print("PlotOperations:plotting:Error: ", e)
 
+    def line_plotting(self, data, month, year):
+        """Plot the line graph using given data. Data accepted is a list."""
+        try:
+            datetime_object = datetime.strptime(month, "%m")
+            month_name = datetime_object.strftime("%B")
+            print(month)
+            plt.plot(data)
+            plt.ylabel("Mean Temp")
+            plt.xlabel(month_name + f", {year}")
+            plt.show()
+        except Exception as e:
+            print("PlotOperations:line_plotting:Error: ", e)
+
 
 test = PlotOperations()
-test.plotting(test.process_data())
+choice = input("Enter plotting choice (box or line):")
+if choice == "box":
+    start_year = input("Enter start year: ")
+    end_year = input("Enter end year: ")
+
+    test.process_data(start_year, end_year)
+elif choice == "line":
+    month = input("Enter a month number: ")
+    year = input("Enter a year number: ")
+
+    test.process_data(None, None, month, year)
 
