@@ -73,12 +73,12 @@ class WeatherScraper():
                                     if month >= int(month_num):
                                         result.update({right_format: value})
                                         if month != new_month:
-                                            logging.error("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+                                            print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
                                             new_month = month
                                 else:
                                     result.update({right_format: value})
                                     if month != new_month:
-                                        logging.error("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+                                        print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
                                         new_month = month
                             except Exception as error:
                                 logging.error("WeatherScraper:get_weather:loop_3", error)
