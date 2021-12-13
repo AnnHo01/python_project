@@ -7,91 +7,91 @@ from datetime import date, datetime
 """This module scrapes the data from the Environment Canada website and prints returns the dictionary of dictionaries of data"""
 
 class WeatherScraper(HTMLParser):
-  """This class parses the HTML and returns the data"""
+    """This class parses the HTML and returns the data"""
 
-  def __init__(self):
-    try:
-      HTMLParser.__init__(self)
-      self.tbody_flag = False
-      self.td_flag = False
-      self.tr_flag = False
-      self.abbr_flag = False
-      self.td_counter = 0
-      self.tr_counter = 0
-      self.daily_temps = {}
-      self.weather ={}
-      self.day = ""
-      self.year = ""
-      self.month = ""
-    except Exception as e:
-        print("WeatherScraper:init", e)
-
-
-
-
-  def handle_starttag(self, tag, attrs):
-    """This functiona handles the starting tags"""
-    try:
-      if tag == "tbody":
-        self.tbody_flag = True
-      if tag == "tr":
-        self.tr_counter += 1
-        self.tr_flag = True
-      if tag == "td":
-        self.td_counter += 1
-        self.td_flag = True
-      if tag == "abbr":
-        self.abbr_flag = True
-        for name, value in attrs:
-          try:
-            if name == "title" and self.tr_counter > 1:
-              self.day = value
-              if(self.day.find(',') >= 0):
-                self.year = self.day[self.day.find(',') + 1: ]
-                self.month = self.day[0:self.day.find(',') - 2]
-          except Exception as e:
-            print("WeatherScraper:handle_starttag:loop", e)
-
-    except Exception as e:
-      print("WeatherScraper:handle_starttag", e)
-
-
-  def handle_endtag(self, tag):
-    """This function handles the end tags"""
-    try:
-      if tag == "tbody":
+    def __init__(self):
+      try:
+        HTMLParser.__init__(self)
         self.tbody_flag = False
-        self.tr_counter = 0
-        # for name, value in self.weather.items():
-        #   print(name, value)
-      if tag == "td":
-            self.td_flag = False
-      if tag == "tr":
+        self.td_flag = False
         self.tr_flag = False
-        self.td_counter = 0
-        self.daily_temps = {}
-      if tag == "abbr":
         self.abbr_flag = False
-    except Exception as e:
-      print("WeatherScraper:handle_endtag", e)
+        self.td_counter = 0
+        self.tr_counter = 0
+        self.daily_temps = {}
+        self.weather ={}
+        self.day = ""
+        self.year = ""
+        self.month = ""
+      except Exception as e:
+          print("WeatherScraper:init", e)
 
 
 
-  def handle_data(self, data):
-    """This fuinction handles the data"""
-    try:
-      if self.tbody_flag and self.td_flag and self.tr_flag:
-        self.temp = data
-        if self.td_counter == 1:
-          self.daily_temps.update({"Max Temp": self.temp})
-        if self.td_counter == 2:
-          self.daily_temps.update({"Min Temp": self.temp})
-        if self.td_counter == 3:
-          self.daily_temps.update({"Mean Temp": self.temp})
-        if (self.day != "Average") and (self.day != "Extreme") and (self.day != ''):
-          self.weather.update({self.day: self.daily_temps})
-    except Exception as e:
-      print("WeatherScraper:handle_data", e)
+
+    def handle_starttag(self, tag, attrs):
+      """This functiona handles the starting tags"""
+      try:
+        if tag == "tbody":
+          self.tbody_flag = True
+        if tag == "tr":
+          self.tr_counter += 1
+          self.tr_flag = True
+        if tag == "td":
+          self.td_counter += 1
+          self.td_flag = True
+        if tag == "abbr":
+          self.abbr_flag = True
+          for name, value in attrs:
+            try:
+              if name == "title" and self.tr_counter > 1:
+                self.day = value
+                if(self.day.find(',') >= 0):
+                  self.year = self.day[self.day.find(',') + 1: ]
+                  self.month = self.day[0:self.day.find(',') - 2]
+            except Exception as e:
+              print("WeatherScraper:handle_starttag:loop", e)
+
+      except Exception as e:
+        print("WeatherScraper:handle_starttag", e)
+
+
+    def handle_endtag(self, tag):
+      """This function handles the end tags"""
+      try:
+        if tag == "tbody":
+          self.tbody_flag = False
+          self.tr_counter = 0
+          # for name, value in self.weather.items():
+          #   print(name, value)
+        if tag == "td":
+              self.td_flag = False
+        if tag == "tr":
+          self.tr_flag = False
+          self.td_counter = 0
+          self.daily_temps = {}
+        if tag == "abbr":
+          self.abbr_flag = False
+      except Exception as e:
+        print("WeatherScraper:handle_endtag", e)
+
+
+
+    def handle_data(self, data):
+      """This fuinction handles the data"""
+      try:
+        if self.tbody_flag and self.td_flag and self.tr_flag:
+          self.temp = data
+          if self.td_counter == 1:
+            self.daily_temps.update({"Max Temp": self.temp})
+          if self.td_counter == 2:
+            self.daily_temps.update({"Min Temp": self.temp})
+          if self.td_counter == 3:
+            self.daily_temps.update({"Mean Temp": self.temp})
+          if (self.day != "Average") and (self.day != "Extreme") and (self.day != ''):
+            self.weather.update({self.day: self.daily_temps})
+      except Exception as e:
+        print("WeatherScraper:handle_data", e)
 
 
 def early_year(type):
