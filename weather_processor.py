@@ -1,10 +1,12 @@
+"""This module handles the user interaction for and provides the data based on the requirements."""
+import logging
 import plot_operations as plot
 import db_operations as db
 import scrape_weather
 
+logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
+logging.info("Start logging")
 
-
-"""This module handles the user interaction for and provides the data based on the requirements."""
 class WeatherProcessor():
     """Present user with menu of choices to check weather data."""
     def __init__(self):
@@ -19,7 +21,7 @@ class WeatherProcessor():
             else:
                 choice = input("Sorry, please run the program again and select the correct input.")
         except Exception as error:
-            print("WeatherProcessor:init", error)
+            logging.error("WeatherProcessor:init", error)
 
 
 
@@ -38,7 +40,7 @@ class WeatherProcessor():
             data = dataBase.fetch_data()
             self.graph(data)
         except Exception as error:
-            print("WeatherProcessor:update", error)
+            logging.error("WeatherProcessor:update", error)
 
 
     def full(self):
@@ -52,7 +54,7 @@ class WeatherProcessor():
             data = dataBase.fetch_data()
             self.graph(data)
         except Exception as error:
-            print("WeatherProcessor:full", error)
+            logging.error("WeatherProcessor:full", error)
 
 
     def skip(self):
@@ -62,7 +64,7 @@ class WeatherProcessor():
             data = dataBase.fetch_data()
             self.graph(data)
         except Exception as error:
-            print("WeatherProcessor:skip", error)
+            logging.error("WeatherProcessor:skip", error)
 
     def graph(self, data):
         """Prompt user for graph type and show corresponded graph."""
@@ -79,7 +81,7 @@ class WeatherProcessor():
                 year = input("Enter a year: ")
                 graph.process_data(None, None, month, year)
         except Exception as error:
-            print("WeatherProcessor:graph", error)
+            logging.error("WeatherProcessor:graph", error)
 
 
 

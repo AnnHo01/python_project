@@ -1,4 +1,8 @@
+import logging
 from html.parser import HTMLParser
+
+logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
+logging.info("Start logging")
 
 class MyHTMLParser(HTMLParser):
     """This class perform scraping actions based on given url."""
@@ -17,7 +21,7 @@ class MyHTMLParser(HTMLParser):
             self.year = ""
             self.month = ""
         except Exception as error:
-            print("WeatherScraper:init", error)
+            logging.error("WeatherScraper:init", error)
 
     def handle_starttag(self, tag, attrs):
         """This functiona handles the starting tags"""
@@ -43,7 +47,7 @@ class MyHTMLParser(HTMLParser):
                         print("WeatherScraper:handle_starttag:loop", error)
 
         except Exception as error:
-            print("WeatherScraper:handle_starttag", error)
+            logging.error("WeatherScraper:handle_starttag", error)
 
 
     def handle_endtag(self, tag):
@@ -61,7 +65,7 @@ class MyHTMLParser(HTMLParser):
             if tag == "abbr":
                 self.abbr_flag = False
         except Exception as error:
-            print("WeatherScraper:handle_endtag", error)
+            logging.error("WeatherScraper:handle_endtag", error)
 
 
 
@@ -79,4 +83,4 @@ class MyHTMLParser(HTMLParser):
                 if (self.day != "Average") and (self.day != "Extreme") and (self.day != ''):
                     self.weather.update({self.day: self.daily_temps})
         except Exception as error:
-            print("WeatherScraper:handle_data", error)
+            logging.error("WeatherScraper:handle_data", error)

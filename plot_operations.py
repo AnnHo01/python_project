@@ -1,8 +1,12 @@
+"""This module plots the gathered data on either box plot or line plot."""
 from datetime import datetime
+import logging
 import matplotlib.pyplot as plt
 import statistics
 import collections
-"""This module plots the gathered data on either box plot or line plot."""
+
+logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
+logging.info("Start logging")
 
 class PlotOperations():
     """Create a basic boxplot of mean temperatures in a date range supplied by the user."""
@@ -12,7 +16,7 @@ class PlotOperations():
             self.data_list = []
             self.data_tuple = data_tuple
         except Exception as e:
-            print("PlotOperations:init", e)
+            prilogging.errornt("PlotOperations:init", e)
 
     def process_data(self, start_year = None, end_year = None, input_month = None, input_year = None):
         """Loop through database and grab data."""
@@ -49,7 +53,7 @@ class PlotOperations():
                             if not avg_temp.isalpha() and avg_temp != '\xa0':
                                 self.data_list.append(float(avg_temp))
                 except Exception as e:
-                    print("PlotOperations:process_data:loop", e)
+                    logging.error("PlotOperations:process_data:loop", e)
 
 
 
@@ -58,7 +62,7 @@ class PlotOperations():
             else:
                 self.line_plotting(self.data_list, input_month, input_year)
         except Exception as e:
-          print("PlotOperations:process_data", e)
+          logging.error("PlotOperations:process_data", e)
 
     def box_plotting(self, data, start_year, end_year):
         """Plot the box graph using given data. Data accepted is a dictionary."""
@@ -75,7 +79,7 @@ class PlotOperations():
                     g_data = [spread, median, flier_high, flier_low]
                     list_plot.append(g_data)
                 except Exception as e:
-                 print("PlotOperations:box_plotting:loop", e)
+                 logging.error("PlotOperations:box_plotting:loop", e)
 
             plt.figure()
             plt.boxplot(list_plot)
@@ -84,7 +88,7 @@ class PlotOperations():
             plt.title(f"Monthly temperature for years: {start_year} to {end_year}")
             plt.show()
         except Exception as e:
-            print("PlotOperations:plotting:Error: ", e)
+            logging.error("PlotOperations:plotting:Error: ", e)
 
     def line_plotting(self, data, month, year):
         """Plot the line graph using given data. Data accepted is a list."""
@@ -96,4 +100,4 @@ class PlotOperations():
             plt.xlabel(month_name + f", {year}")
             plt.show()
         except Exception as e:
-            print("PlotOperations:line_plotting:Error: ", e)
+            logging.error("PlotOperations:line_plotting:Error: ", e)

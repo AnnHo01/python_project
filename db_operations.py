@@ -1,7 +1,11 @@
+
+"""This module inserts data in the database and returns the data"""
+import logging
 import scrape_weather
 import dbcm
 
-"""This module inserts data in the database and returns the data"""
+logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
+logging.info("Start logging")
 
 
 class DBOperations():
@@ -12,7 +16,7 @@ class DBOperations():
             self.weather = None
             self.filename = filename
         except Exception as e:
-            print("DBOperations:init", e)
+            logging.error("DBOperations:init", e)
 
 
     def initialize_db(self, weather):
@@ -27,7 +31,7 @@ class DBOperations():
                                                     max_temp real not null,
                                                     avg_temp real not null);""")
         except Exception as e:
-            print("DBOperation:init_db:error: ", e)
+            logging.error("DBOperation:init_db:error: ", e)
 
     def save_data(self):
         """This function will insert the data into the table."""
@@ -47,13 +51,13 @@ class DBOperations():
                                 elif temp == 'Mean Temp':
                                     mean_temp = value
                             except Exception as e:
-                                print("DBOperation:save_data:loop", e)
+                                logging.error("DBOperation:save_data:loop", e)
 
                         data = (data_date,data_location,max_temp,min_temp,mean_temp)
                         db.execute(sql,data)
 
         except Exception as e:
-            print("All data is up to date.")
+            logging.error("All data is up to date.")
 
 
     def fetch_data(self, update_option = None):
@@ -70,10 +74,10 @@ class DBOperations():
                     try:
                         list.append(row)
                     except Exception as e:
-                     print("DBOperation:fetch_data:loop", e)
+                     logging.error("DBOperation:fetch_data:loop", e)
                 return tuple(list)
         except Exception as e:
-            print("DBOperation:fetch_db:error: ", e)
+            logging.error("DBOperation:fetch_db:error: ", e)
 
 
     def purge_data(self):
@@ -81,9 +85,9 @@ class DBOperations():
         try:
             with dbcm.DBCM(self.filename) as db:
                 db.execute("DELETE FROM samples")
-                print("Delete successfully")
+                logging.error("Delete successfully")
         except Exception as e:
-            print("DBOperation:purge_data:error: ", e)
+            logging.error("DBOperation:purge_data:error: ", e)
 
     def check_data(self, db, date):
         """This function will check the existing data"""
@@ -97,7 +101,7 @@ class DBOperations():
                 if_exist = False
             return if_exist
         except Exception as e:
-            print("DBOperation:check_data:error: ", e)
+            logging.error("DBOperation:check_data:error: ", e)
 
 """Inputing data to database"""
 # weather = scrape_weather.get_weather()
