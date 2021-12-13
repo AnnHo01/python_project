@@ -1,8 +1,12 @@
 """This module scrapes the data from the Environment Canada website and prints returns the dictionary of dictionaries of data"""
 import urllib.request
 from datetime import date, datetime
+import logging
 import html_parser as parser
 
+
+logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
+logging.info("Start logging")
 
 
 class WeatherScraper():
@@ -26,7 +30,7 @@ class WeatherScraper():
                 result = month
             return result
         except Exception as error:
-            print("WeatherScraper:early_year", error)
+            logging.error("WeatherScraper:early_year", error)
 
 
     def get_weather(self, latest_year = None, latest_month = None):
@@ -69,17 +73,17 @@ class WeatherScraper():
                                     if month >= int(month_num):
                                         result.update({right_format: value})
                                         if month != new_month:
-                                            print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+                                            logging.error("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
                                             new_month = month
                                 else:
                                     result.update({right_format: value})
                                     if month != new_month:
-                                        print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
+                                        logging.error("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
                                         new_month = month
                             except Exception as error:
-                                print("WeatherScraper:get_weather:loop_3", error)
+                                logging.error("WeatherScraper:get_weather:loop_3", error)
                 except Exception as error:
-                    print("WeatherScraper:get_weather:loop_1", error)
+                    logging.error("WeatherScraper:get_weather:loop_1", error)
             return result
         except Exception as error:
-            print("WeatherScraper:get_weather", error)
+            logging.error("WeatherScraper:get_weather", error)
