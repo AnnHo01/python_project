@@ -16,8 +16,8 @@ class MyHTMLParser(HTMLParser):
             self.day = ""
             self.year = ""
             self.month = ""
-        except Exception as e:
-            print("WeatherScraper:init", e)
+        except Exception as error:
+            print("WeatherScraper:init", error)
 
     def handle_starttag(self, tag, attrs):
         """This functiona handles the starting tags"""
@@ -39,8 +39,8 @@ class MyHTMLParser(HTMLParser):
                             if(self.day.find(',') >= 0):
                                 self.year = self.day[self.day.find(',') + 1: ]
                                 self.month = self.day[0:self.day.find(',') - 2]
-                    except Exception as e:
-                        print("WeatherScraper:handle_starttag:loop", e)
+                    except Exception as error:
+                        print("WeatherScraper:handle_starttag:loop", error)
 
         except Exception as error:
             print("WeatherScraper:handle_starttag", error)
@@ -60,8 +60,8 @@ class MyHTMLParser(HTMLParser):
                 self.daily_temps = {}
             if tag == "abbr":
                 self.abbr_flag = False
-        except Exception as e:
-            print("WeatherScraper:handle_endtag", e)
+        except Exception as error:
+            print("WeatherScraper:handle_endtag", error)
 
 
 
@@ -78,5 +78,5 @@ class MyHTMLParser(HTMLParser):
                     self.daily_temps.update({"Mean Temp": self.temp})
                 if (self.day != "Average") and (self.day != "Extreme") and (self.day != ''):
                     self.weather.update({self.day: self.daily_temps})
-        except Exception as e:
-            print("WeatherScraper:handle_data", e)
+        except Exception as error:
+            print("WeatherScraper:handle_data", error)

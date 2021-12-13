@@ -22,8 +22,8 @@ class WeatherScraper():
               return year
           elif(type=="m"):
               return month
-      except Exception as e:
-          print("WeatherScraper:early_year", e)
+      except Exception as error:
+          print("WeatherScraper:early_year", error)
 
 
     def get_weather(self, latest_year = None, latest_month = None):
@@ -73,13 +73,13 @@ class WeatherScraper():
                                     if month != new_month:
                                         print("Processing: " + key[:key.find(',') - 2] + f" {year_to_loop}")
                                         new_month = month
-                            except Exception as e:
-                                print("WeatherScraper:get_weather:loop_3", e)
-                except Exception as e:
-                    print("WeatherScraper:get_weather:loop_1", e)
+                            except Exception as error:
+                                print("WeatherScraper:get_weather:loop_3", error)
+                except Exception as error:
+                    print("WeatherScraper:get_weather:loop_1", error)
             return result
-        except Exception as e:
-            print("WeatherScraper:get_weather", e)
+        except Exception as error:
+            print("WeatherScraper:get_weather", error)
 
 
 # print(get_weather())
