@@ -2,6 +2,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import statistics
 import collections
+"""This module plots the gathered data on either box plot or line plot."""
 
 class PlotOperations():
     """Create a basic boxplot of mean temperatures in a date range supplied by the user."""

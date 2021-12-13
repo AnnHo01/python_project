@@ -4,9 +4,10 @@ import urllib.request
 from decimal import Decimal
 from datetime import date, datetime
 
-"""This module scrapes the data from the website colorhexa.com and prints out the colors"""
+"""This module scrapes the data from the Environment Canada website and prints returns the dictionary of dictionaries of data"""
 
 class WeatherScraper(HTMLParser):
+  """This class parses the HTML and returns the data"""
 
   def __init__(self):
     HTMLParser.__init__(self)
@@ -24,6 +25,7 @@ class WeatherScraper(HTMLParser):
 
 
   def handle_starttag(self, tag, attrs):
+    """This functiona handles the starting tags"""
     if tag == "tbody":
       self.tbody_flag = True
     if tag == "tr":
@@ -43,6 +45,7 @@ class WeatherScraper(HTMLParser):
 
 
   def handle_endtag(self, tag):
+    """This function handles the end tags"""
     if tag == "tbody":
       self.tbody_flag = False
       self.tr_counter = 0
@@ -59,6 +62,7 @@ class WeatherScraper(HTMLParser):
 
 
   def handle_data(self, data):
+    """This fuinction handles the data"""
     if self.tbody_flag and self.td_flag and self.tr_flag:
       self.temp = data
       if self.td_counter == 1:
@@ -72,7 +76,7 @@ class WeatherScraper(HTMLParser):
 
 
 def early_year(type):
-  """This function is finding out the earliest yearon the website"""
+  """This function is finding out the earliest year on the website"""
 
   today = date.today()
   input = today.year

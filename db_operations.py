@@ -1,7 +1,11 @@
 import scrape_weather
 import dbcm
 
+"""This module inserts data in the database and returns the data"""
+
+
 class DBOperations():
+    """This class stores the weather data inside the SQLite database."""
 
     def __init__(self, filename):
         self.weather = None
@@ -64,6 +68,7 @@ class DBOperations():
 
 
     def purge_data(self):
+        """This function will purge the data from the table."""
         try:
             with dbcm.DBCM(self.filename) as db:
                 db.execute("DELETE FROM samples")
@@ -72,6 +77,7 @@ class DBOperations():
             print("DBOperation:purge_data:error: ", e)
 
     def check_data(self, db, date):
+        """This function will check the existing data"""
         if_exist = False
         db.execute("select * from samples where sample_date = " + date)
 

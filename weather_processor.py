@@ -3,6 +3,9 @@ import db_operations as db
 import scrape_weather
 
 
+
+"""This module handles the user interaction for and provides the data based on the requirements."""
+
 class WeatherProcessor():
     """Present user with menu of choices to check weather data."""
     def __init__(self):
