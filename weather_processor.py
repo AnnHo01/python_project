@@ -2,7 +2,7 @@
 import logging
 import plot_operations as plot
 import db_operations as db
-import scrape_weather
+import scrape_weather as scraper
 
 logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
 logging.info("Start logging")
@@ -34,7 +34,8 @@ class WeatherProcessor():
                 latest_date = str(item[1])
                 latest_year = int(latest_date[:4])
                 latest_month = int(latest_date[5:7])
-            scrape = scrape_weather.get_weather(latest_year,latest_month)
+            scrape_tool = scraper.WeatherScraper()
+            scrape = scrape_tool.get_weather(latest_year,latest_month)
             database.initialize_db(scrape)
             database.save_data()
             data = database.fetch_data()
@@ -46,7 +47,8 @@ class WeatherProcessor():
     def full(self):
         """Call purge and then save_data"""
         try:
-            weather = scrape_weather.WeatherScraper.get_weather()
+            scrape_tool = scraper.WeatherScraper()
+            weather = scrape_tool.get_weather()
             database = db.DBOperations("weather.sqlite")
             database.purge_data()
             database.initialize_db(weather)
