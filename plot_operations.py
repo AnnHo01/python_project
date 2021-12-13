@@ -15,6 +15,7 @@ class PlotOperations():
         try:
             self.weather_data = {}
             self.data_list = []
+            self.date_list = []
             self.data_tuple = data_tuple
         except Exception as error:
             logging.error("PlotOperations:init", error)
@@ -53,6 +54,7 @@ class PlotOperations():
                         if int(input_month) == month and int(input_year) == year:
                             if not avg_temp.isalpha() and avg_temp != '\xa0':
                                 self.data_list.append(float(avg_temp))
+                                self.date_list.append(date)
                 except Exception as error:
                     logging.error("PlotOperations:process_data:loop", error)
 
@@ -61,7 +63,7 @@ class PlotOperations():
             if choice == "box":
                 self.box_plotting(self.weather_data, start_year, end_year)
             else:
-                self.line_plotting(self.data_list, input_month, input_year)
+                self.line_plotting(self.data_list, self.date_list, input_month, input_year)
         except Exception as error:
           logging.error("PlotOperations:process_data", error)
 
@@ -91,14 +93,15 @@ class PlotOperations():
         except Exception as error:
             logging.error("PlotOperations:plotting:Error: ", error)
 
-    def line_plotting(self, data, month, year):
+    def line_plotting(self, data, date, month, year):
         """Plot the line graph using given data. Data accepted is a list."""
         try:
             datetime_object = datetime.strptime(month, "%m")
             month_name = datetime_object.strftime("%B")
-            plt.plot(data)
+            plt.plot(date, data)
             plt.ylabel("Mean Temp")
             plt.xlabel(month_name + f", {year}")
+            plt.xticks(rotation=45)
             plt.show()
         except Exception as error:
             logging.error("PlotOperations:line_plotting:Error: ", error)
