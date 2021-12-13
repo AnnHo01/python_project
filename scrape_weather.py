@@ -54,7 +54,7 @@ class WeatherScraper():
                     year_to_loop = int(early) + i
                     for j in range(12):
                         month = j + 1
-                        myparser = WeatherScraper()
+                        myparser = parser.MyHTMLParser()
                         with urllib.request.urlopen(f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={today_year}&Day=1&Year={year_to_loop}&Month={month}#') as response:
                             html = str(response.read())
 
