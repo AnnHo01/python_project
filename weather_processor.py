@@ -9,7 +9,7 @@ import scrape_weather
 class WeatherProcessor():
     """Present user with menu of choices to check weather data."""
     def __init__(self):
-      choice = input("Fetch all the available data, update the existing or skip? ([F]ull/[U]pdate/[S]kip)      ")
+      choice = input("Fetch all the available data, update the existing or skip? ([F]ull/[U]pdate/[S]kip): ")
       if choice.upper() == 'F':
         self.full()
       elif choice.upper() == 'U':
@@ -17,7 +17,7 @@ class WeatherProcessor():
       elif choice.upper() == 'S':
         self.skip()
       else:
-        choice = input("Fetch all the available data, update the existing or skip? ([F]ull/[U]pdate/[S]kip)     ")
+        choice = input("Sorry, please run the program again and select the correct input.")
 
     def update(self):
         """Update only neccessary data"""
@@ -53,13 +53,13 @@ class WeatherProcessor():
     def graph(self, data):
         """Prompt user for graph type and show corresponded graph."""
         graph = plot.PlotOperations(data)
-        choice = input("Enter plotting choice (box or line):")
-        if choice == "box":
+        choice = input("Enter plotting choice ([B]ox or [L]ine): ").upper()
+        if choice == "B":
             start_year = input("Enter start year: ")
             end_year = input("Enter end year: ")
 
             graph.process_data(start_year, end_year)
-        elif choice == "line":
+        elif choice == "L":
             month = input("Enter a month (number): ")
             year = input("Enter a year: ")
             graph.process_data(None, None, month, year)
