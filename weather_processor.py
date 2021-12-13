@@ -28,16 +28,16 @@ class WeatherProcessor():
     def update(self):
         """Update only neccessary data"""
         try:
-            dataBase = db.DBOperations("weather.sqlite")
-            data_tuple = dataBase.fetch_data(True)
+            database = db.DBOperations("weather.sqlite")
+            data_tuple = database.fetch_data(True)
             for item in data_tuple:
                 latest_date = str(item[1])
                 latest_year = int(latest_date[:4])
                 latest_month = int(latest_date[5:7])
             scrape = scrape_weather.get_weather(latest_year,latest_month)
-            dataBase.initialize_db(scrape)
-            dataBase.save_data()
-            data = dataBase.fetch_data()
+            database.initialize_db(scrape)
+            database.save_data()
+            data = database.fetch_data()
             self.graph(data)
         except Exception as error:
             logging.error("WeatherProcessor:update", error)
@@ -46,12 +46,12 @@ class WeatherProcessor():
     def full(self):
         """Call purge and then save_data"""
         try:
-            weather = scrape_weather.get_weather()
-            dataBase = db.DBOperations("weather.sqlite")
-            dataBase.purge_data()
-            dataBase.initialize_db(weather)
-            dataBase.save_data()
-            data = dataBase.fetch_data()
+            weather = scrape_weather.WeatherScraper.get_weather()
+            database = db.DBOperations("weather.sqlite")
+            database.purge_data()
+            database.initialize_db(weather)
+            database.save_data()
+            data = database.fetch_data()
             self.graph(data)
         except Exception as error:
             logging.error("WeatherProcessor:full", error)
@@ -60,8 +60,8 @@ class WeatherProcessor():
     def skip(self):
         """Call fetch all and ask for what plot type"""
         try:
-            dataBase = db.DBOperations("weather.sqlite")
-            data = dataBase.fetch_data()
+            database = db.DBOperations("weather.sqlite")
+            data = database.fetch_data()
             self.graph(data)
         except Exception as error:
             logging.error("WeatherProcessor:skip", error)

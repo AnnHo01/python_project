@@ -1,9 +1,10 @@
 """This module plots the gathered data on either box plot or line plot."""
+import statistics
+import collections
 from datetime import datetime
 import logging
 import matplotlib.pyplot as plt
-import statistics
-import collections
+
 
 logging.basicConfig(filename='status.log', format='%(asctime)s %(message)s', level=logging.NOTSET)
 logging.info("Start logging")
@@ -15,8 +16,8 @@ class PlotOperations():
             self.weather_data = {}
             self.data_list = []
             self.data_tuple = data_tuple
-        except Exception as e:
-            logging.error("PlotOperations:init", e)
+        except Exception as error:
+            logging.error("PlotOperations:init", error)
 
     def process_data(self, start_year = None, end_year = None, input_month = None, input_year = None):
         """Loop through database and grab data."""
@@ -24,13 +25,13 @@ class PlotOperations():
             data_tuple = self.data_tuple
             new_month = 0
             choice = None
-            for x in data_tuple:
+            for item in data_tuple:
                 try:
-                    date = str(x[1])
+                    date = str(item[1])
                     year = int(date[:4])
                     month = int(date[5:7])
                     day = int(date[8:])
-                    avg_temp = str(x[5])
+                    avg_temp = str(item[5])
                     if start_year != None:
                         if (int(start_year) <= year and year <= int(end_year)) or (year > int(end_year) and month == 1):
                             if month != new_month:
@@ -52,8 +53,8 @@ class PlotOperations():
                         if int(input_month) == month and int(input_year) == year:
                             if not avg_temp.isalpha() and avg_temp != '\xa0':
                                 self.data_list.append(float(avg_temp))
-                except Exception as e:
-                    logging.error("PlotOperations:process_data:loop", e)
+                except Exception as error:
+                    logging.error("PlotOperations:process_data:loop", error)
 
 
 
@@ -61,8 +62,8 @@ class PlotOperations():
                 self.box_plotting(self.weather_data, start_year, end_year)
             else:
                 self.line_plotting(self.data_list, input_month, input_year)
-        except Exception as e:
-          logging.error("PlotOperations:process_data", e)
+        except Exception as error:
+          logging.error("PlotOperations:process_data", error)
 
     def box_plotting(self, data, start_year, end_year):
         """Plot the box graph using given data. Data accepted is a dictionary."""
@@ -78,8 +79,8 @@ class PlotOperations():
 
                     g_data = [spread, median, flier_high, flier_low]
                     list_plot.append(g_data)
-                except Exception as e:
-                 logging.error("PlotOperations:box_plotting:loop", e)
+                except Exception as error:
+                 logging.error("PlotOperations:box_plotting:loop", error)
 
             plt.figure()
             plt.boxplot(list_plot)
@@ -87,8 +88,8 @@ class PlotOperations():
             plt.xlabel(f"{start_year} to {end_year}")
             plt.title(f"Monthly temperature for years: {start_year} to {end_year}")
             plt.show()
-        except Exception as e:
-            logging.error("PlotOperations:plotting:Error: ", e)
+        except Exception as error:
+            logging.error("PlotOperations:plotting:Error: ", error)
 
     def line_plotting(self, data, month, year):
         """Plot the line graph using given data. Data accepted is a list."""
@@ -99,5 +100,5 @@ class PlotOperations():
             plt.ylabel("Mean Temp")
             plt.xlabel(month_name + f", {year}")
             plt.show()
-        except Exception as e:
-            logging.error("PlotOperations:line_plotting:Error: ", e)
+        except Exception as error:
+            logging.error("PlotOperations:line_plotting:Error: ", error)

@@ -12,26 +12,26 @@ class DBCM():
     def __init__(self, filename):
         try:
             self.filename = filename
-            self.db = None
+            self.database = None
             self.cur = None
-        except Exception as e:
-            logging.error("DBCM:init", e)
+        except Exception as error:
+            logging.error("DBCM:init", error)
 
 
     def __enter__(self):
         """Opens the file and returns the file"""
         try:
-            self.db = sqlite3.connect(self.filename)
-            self.cur = self.db.cursor()
+            self.database = sqlite3.connect(self.filename)
+            self.cur = self.database.cursor()
             return self.cur
-        except Exception as e:
-            logging.error("DBCM:enter", e)
+        except Exception as error:
+            logging.error("DBCM:enter", error)
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Closes the file"""
         try:
-            self.db.commit()
-            self.db.close()
+            self.database.commit()
+            self.database.close()
             self.cur.close
-        except Exception as e:
-            logging.error("DBCM:exit", e)
+        except Exception as error:
+            logging.error("DBCM:exit", error)
