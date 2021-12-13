@@ -16,7 +16,7 @@ class PlotOperations():
             self.data_list = []
             self.data_tuple = data_tuple
         except Exception as e:
-            prilogging.errornt("PlotOperations:init", e)
+            logging.error("PlotOperations:init", e)
 
     def process_data(self, start_year = None, end_year = None, input_month = None, input_year = None):
         """Loop through database and grab data."""
