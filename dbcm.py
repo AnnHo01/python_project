@@ -4,18 +4,28 @@ import sqlite3
 class DBCM():
     """This class contains context manager"""
     def __init__(self, filename):
-        self.filename = filename
-        self.db = None
-        self.cur = None
+        try:
+            self.filename = filename
+            self.db = None
+            self.cur = None
+        except Exception as e:
+            print("DBCM:init", e)
+
 
     def __enter__(self):
         """Opens the file and returns the file"""
-        self.db = sqlite3.connect(self.filename)
-        self.cur = self.db.cursor()
-        return self.cur
+        try:
+            self.db = sqlite3.connect(self.filename)
+            self.cur = self.db.cursor()
+            return self.cur
+        except Exception as e:
+            print("DBCM:enter", e)
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Closes the file"""
-        self.db.commit()
-        self.db.close()
-        self.cur.close
+        try:
+            self.db.commit()
+            self.db.close()
+            self.cur.close
+        except Exception as e:
+            print("DBCM:exit", e)

@@ -8,8 +8,11 @@ class DBOperations():
     """This class stores the weather data inside the SQLite database."""
 
     def __init__(self, filename):
-        self.weather = None
-        self.filename = filename
+        try:
+            self.weather = None
+            self.filename = filename
+        except Exception as e:
+            print("DBOperations:init", e)
 
 
     def initialize_db(self, weather):
@@ -36,18 +39,21 @@ class DBOperations():
                         data_date = date
                         data_location = 'Winnipeg, MB'
                         for temp,  value in temp_data.items():
-                            if temp == 'Max Temp':
-                                max_temp = value
-                            elif temp == 'Min Temp':
-                                min_temp = value
-                            elif temp == 'Mean Temp':
-                                mean_temp = value
+                            try:
+                                if temp == 'Max Temp':
+                                    max_temp = value
+                                elif temp == 'Min Temp':
+                                    min_temp = value
+                                elif temp == 'Mean Temp':
+                                    mean_temp = value
+                            except Exception as e:
+                                print("DBOperation:save_data:loop", e)
 
                         data = (data_date,data_location,max_temp,min_temp,mean_temp)
                         db.execute(sql,data)
 
         except Exception as e:
-            print("All data is up to dated.")
+            print("All data is up to date.")
 
 
     def fetch_data(self, update_option = None):
@@ -61,7 +67,10 @@ class DBOperations():
                 query = "select * from samples"
             with dbcm.DBCM(self.filename) as db:
                 for row in db.execute(query):
-                    list.append(row)
+                    try:
+                        list.append(row)
+                    except Exception as e:
+                     print("DBOperation:fetch_data:loop", e)
                 return tuple(list)
         except Exception as e:
             print("DBOperation:fetch_db:error: ", e)
@@ -78,14 +87,17 @@ class DBOperations():
 
     def check_data(self, db, date):
         """This function will check the existing data"""
-        if_exist = False
-        db.execute("select * from samples where sample_date = " + date)
-
-        if db.fetchone():
-            if_exist = True
-        else:
+        try:
             if_exist = False
-        return if_exist
+            db.execute("select * from samples where sample_date = " + date)
+
+            if db.fetchone():
+                if_exist = True
+            else:
+                if_exist = False
+            return if_exist
+        except Exception as e:
+            print("DBOperation:check_data:error: ", e)
 
 """Inputing data to database"""
 # weather = scrape_weather.get_weather()
