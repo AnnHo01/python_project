@@ -1,29 +1,32 @@
-import html_parser as parser
+"""This module scrapes the data from the Environment Canada website and prints returns the dictionary of dictionaries of data"""
 import urllib.request
 from datetime import date, datetime
+import html_parser as parser
 
 
-"""This module scrapes the data from the Environment Canada website and prints returns the dictionary of dictionaries of data"""
+
 class WeatherScraper():
     """This class parses the HTML and returns the data"""
-    def early_year(self, type):
-      """This function is finding out the earliest year on the website"""
-      try:
-          today = date.today()
-          input = today.year
-          url = f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={input}&Day=1&Year=1840'
-          myparser = parser.MyHTMLParser()
-          with urllib.request.urlopen(url) as response:
-              html = str(response.read())
-          myparser.feed(html)
-          year = myparser.year
-          month = myparser.month
-          if(type=="y"):
-              return year
-          elif(type=="m"):
-              return month
-      except Exception as error:
-          print("WeatherScraper:early_year", error)
+    def early_year(self, date_type):
+        """This function is finding out the earliest year on the website"""
+        try:
+            result = None
+            today = date.today()
+            today_year = today.year
+            url = f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={today_year}&Day=1&Year=1840'
+            myparser = parser.MyHTMLParser()
+            with urllib.request.urlopen(url) as response:
+                html = str(response.read())
+            myparser.feed(html)
+            year = myparser.year
+            month = myparser.month
+            if date_type=="y":
+                result = year
+            elif date_type=="m" :
+                result = month
+            return result
+        except Exception as error:
+            print("WeatherScraper:early_year", error)
 
 
     def get_weather(self, latest_year = None, latest_month = None):
@@ -31,32 +34,32 @@ class WeatherScraper():
         try:
             result = {}
             today = date.today()
-            input = today.year
+            today_year = today.year
             new_month = 0
             early = None
-            eMonth = None
-            if latest_year != None:
+            e_month = None
+            if latest_year is not None:
                 early = latest_year
-                eMonth = str(latest_month)
+                e_month = str(latest_month)
             else:
                 early = self.early_year("y")
-                eMonth = self.early_year("m")
+                e_month = self.early_year("m")
 
-            for i in range((int(input) - int(early) + 1)):
+            for i in range((int(today_year) - int(early) + 1)):
                 try:
                     year_to_loop = int(early) + i
                     for j in range(12):
                         month = j + 1
                         myparser = WeatherScraper()
-                        with urllib.request.urlopen(f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={input}&Day=1&Year={year_to_loop}&Month={month}#') as response:
+                        with urllib.request.urlopen(f'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear={today_year}&Day=1&Year={year_to_loop}&Month={month}#') as response:
                             html = str(response.read())
 
                         myparser.feed(html)
-                        if not eMonth.isnumeric():
-                            datetime_object = datetime.strptime(eMonth.strip(), "%B")
+                        if not e_month.isnumeric():
+                            datetime_object = datetime.strptime(e_month.strip(), "%B")
                             month_num = datetime_object.month
                         else:
-                            month_num = int(eMonth)
+                            month_num = int(e_month)
 
                         for key, value in myparser.weather.items():
                             try:
@@ -80,6 +83,3 @@ class WeatherScraper():
             return result
         except Exception as error:
             print("WeatherScraper:get_weather", error)
-
-
-# print(get_weather())
